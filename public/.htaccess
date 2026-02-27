@@ -1,19 +1,18 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   
-  # 1. Allow access to the /api directory and /media directly
+  # 1. Allow access to the /api, /media, and /dist directories directly
   RewriteCond %{REQUEST_URI} ^/api/ [OR]
-  RewriteCond %{REQUEST_URI} ^/media/
+  RewriteCond %{REQUEST_URI} ^/media/ [OR]
+  RewriteCond %{REQUEST_URI} ^/dist/ [OR]
+  RewriteCond %{REQUEST_URI} ^/assets/
   RewriteRule ^ - [L]
 
-  # 2. Redirect root and other requests to /dist/ folder
-  RewriteCond %{REQUEST_URI} !^/dist/
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
+  # 2. Force everything else into /dist/
+  # This ensures root index.html is ignored in favor of dist/index.html
   RewriteRule ^(.*)$ /dist/$1 [L]
 
-  # 3. If in dist, handle SPA routing
-  RewriteCond %{REQUEST_URI} ^/dist/
+  # 3. Inside dist, handle SPA routing (fallback to index.html)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^dist/(.*)$ /dist/index.html [L]

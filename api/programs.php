@@ -1,6 +1,12 @@
 <?php
 require_once 'db.php';
 
+session_start();
+// Security: Check if admin is logged in for mutations
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' && !isset($_SESSION['admin_id'])) {
+    sendResponse(['error' => 'Unauthorized'], 401);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         $stmt = $pdo->query("SELECT * FROM programs ORDER BY id ASC");

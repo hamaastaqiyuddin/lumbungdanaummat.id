@@ -1,6 +1,11 @@
 <?php
 require_once 'db.php';
 
+session_start();
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' && !isset($_SESSION['admin_id'])) {
+    sendResponse(['error' => 'Unauthorized'], 401);
+}
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
