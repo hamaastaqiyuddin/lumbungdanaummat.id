@@ -1,0 +1,653 @@
+import React, { useState, useEffect } from 'react';
+import {
+Heart, Menu, X, Globe, ShieldCheck, Users,
+ChevronRight, Target, Rocket, Handshake,
+Moon, Sun, Languages, Newspaper, Image, Mail,
+Calendar, ArrowRight, MessageCircle, Phone, ChevronDown,
+Hammer, CheckCircle2, Clock, LayoutGrid, Award, FileText, Quote, Check,
+Wallet // Icon untuk Sedekah
+} from 'lucide-react';
+
+const App = () => {
+const [isMenuOpen, setIsMenuOpen] = useState(false);
+const [isDarkMode, setIsDarkMode] = useState(false);
+const [lang, setLang] = useState('id'); // 'id', 'en', 'ar', 'zh', 'ja'
+const [showLangMenu, setShowLangMenu] = useState(false);
+
+// State untuk slideshow background Hero
+const [heroImageIndex, setHeroImageIndex] = useState(0);
+
+// Daftar gambar untuk slideshow background
+const heroImages = [
+"https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1600&auto=format&fit=crop", // Pendidikan /
+Anak-anak
+"https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=1600&auto=format&fit=crop", // Distribusi Bantuan
+"https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1600&auto=format&fit=crop", // Kegiatan Sosial
+"https://images.unsplash.com/photo-1609139003551-ee4049653764?q=80&w=1600&auto=format&fit=crop" // Kegiatan
+Mengaji/Dakwah
+];
+
+// Efek untuk mengganti gambar background setiap 5 detik
+useEffect(() => {
+const interval = setInterval(() => {
+setHeroImageIndex((prev) => (prev + 1) % heroImages.length);
+}, 5000);
+return () => clearInterval(interval);
+}, []);
+
+// Update Favicon saat komponen dimuat
+useEffect(() => {
+const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+link.type = 'image/png';
+link.rel = 'shortcut icon';
+link.href = 'Logo_LDU__no_text_-removebg.png';
+document.getElementsByTagName('head')[0].appendChild(link);
+}, []);
+
+const isRTL = lang === 'ar';
+
+// --- KAMUS TERJEMAHAN ---
+const content = {
+id: {
+nav: ["Beranda", "Tentang Kami", "Berita", "Galeri"],
+sedekahBtn: "Sedekah",
+hero: {
+badge: "Terverifikasi & Resmi",
+title: "Kesejahteraan Ummat",
+subtitle: "Melalui Pemberdayaan Syar'i",
+desc: "Lembaga filantropi pengelola dana sosial & kemanusiaan terpercaya di Indonesia yang profesional, transparan, dan
+berizin resmi.",
+btn1: "Donasi Sekarang",
+btn2: "Buletin"
+},
+trust: {
+legalTitle: "Legalitas Resmi",
+partnersTitle: "Mitra Penyaluran & Bank",
+license1: "SK Kemenkumham: AHU-0012345.AH.01.04",
+license2: "Izin LAZ Skala Kabupaten/Kota",
+audit: "Diaudit oleh KAP Terdaftar"
+},
+stats: ["Dana Terhimpun", "Penerima Manfaat", "Donatur Terlibat", "Proyek Selesai"],
+visimisi: {
+title: "Visi & Misi Kami",
+visiTitle: "Visi Utama",
+visiText: '"Terwujudnya Kesejahteraan Ummat melalui Pelayanan, Pengelolaan dan Pemberdayaan Ummat secara Syar\'i
+berskala Global"',
+misi: [
+{ title: "Filantropi Profesional", text: "Menjadi lembaga filantropi islam yang bergerak di bidang sosial kemanusiaan."
+},
+{ title: "Pemberdayaan Terpadu", text: "Melakukan pemberdayaan ummat dan menginisiasi lembaga sosial, pendidikan dan
+kesehatan." },
+{ title: "Kolaborasi Strategis", text: "Menjalin kerjasama dengan perusahan yang bertanggungjawab." }
+]
+},
+testimonials: {
+title: "Kata Mereka",
+subtitle: "Apa kata donatur dan penerima manfaat tentang kami."
+},
+newsletter: { title: "Buletin", subtitle: "Dapatkan laporan penggunaan dana transparan via Email/WA.", placeholderEmail:
+"Email Anda", placeholderWA: "No WhatsApp", button: "Daftar Laporan" },
+footer: {
+desc: "Lumbung Dana Ummat adalah platform filantropi di bawah naungan Yayasan Amanah Ummat Kediri.",
+rights: "Hak Cipta Dilindungi.",
+contact: "Layanan Donatur",
+address: "Alamat Kantor",
+addressText: "Jl. Panglima Polim No. 123, Kota Kediri, Jawa Timur 64123 (Melayani area Kediri, Nganjuk, Pare)",
+legal: "Legalitas & Izin"
+}
+},
+en: {
+nav: ["Home", "About Us", "News", "Gallery"],
+sedekahBtn: "Donate",
+hero: {
+badge: "Verified & Sharia Compliant",
+title: "Ummat's Welfare",
+subtitle: "Through Sharia Empowerment",
+desc: "Trusted philanthropic institution managing social & humanitarian funds in Indonesia. Professional, transparent,
+and officially licensed.",
+btn1: "Donate Now",
+btn2: "Bulletin"
+},
+trust: {
+legalTitle: "Official Legality",
+partnersTitle: "Partners & Banks",
+license1: "Ministry of Law Decree: AHU-0012345.AH.01.04",
+license2: "Licensed Charity Institution",
+audit: "Audited by Registered Public Accountants"
+},
+stats: ["Collected Funds", "Beneficiaries", "Active Donors", "Completed Projects"],
+visimisi: {
+title: "Our Vision & Mission",
+visiTitle: "Main Vision",
+visiText: '"Realizing Ummat\'s Welfare through Sharia-based Service and Empowerment globally"',
+misi: [
+{ title: "Professional Philanthropy", text: "Being an Islamic philanthropic institution in social & humanitarian
+sectors." },
+{ title: "Integrated Empowerment", text: "Empowering community in social, educational and health sectors." },
+{ title: "Strategic Collaboration", text: "Collaborating with responsible companies." }
+]
+},
+testimonials: {
+title: "Testimonials",
+subtitle: "What donors and beneficiaries say about us."
+},
+newsletter: { title: "Periodic Reports", subtitle: "Get transparent fund usage reports via Email/WA.", placeholderEmail:
+"Your Email", placeholderWA: "WhatsApp No", button: "Subscribe Report" },
+footer: {
+desc: "Lumbung Dana Ummat is a philanthropy platform under Yayasan Amanah Ummat Kediri.",
+rights: "All Rights Reserved.",
+contact: "Donor Service",
+address: "Office Address",
+addressText: "Jl. Panglima Polim No. 123, Kediri City, East Java 64123 (Serving Kediri, Nganjuk, Pare)",
+legal: "Legality & Licenses"
+}
+},
+ar: {
+nav: ["الرئيسية", "من نحن", "الأخبار", "المعرض"],
+sedekahBtn: "صدقة",
+hero: {
+badge: "موثقة ومتوافقة مع الشريعة",
+title: "رفاهية الأمة",
+subtitle: "من خلال التمكين الشرعي",
+desc: "مؤسسة خيرية موثوقة لإدارة الأموال الاجتماعية والإنسانية في إندونيسيا. مهنية، شفافة، ومرخصة رسمياً.",
+btn1: "تبرع الآن",
+btn2: "النشرة"
+},
+trust: {
+legalTitle: "الشرعية الرسمية",
+partnersTitle: "الشركاء والبنوك",
+license1: "مرسوم وزارة العدل: AHU-0012345.AH.01.04",
+license2: "مؤسسة خيرية مرخصة",
+audit: "مدققة من قبل محاسبين قانونيين"
+},
+stats: ["الأموال المجمعة", "المستفيدون", "المتبرعون", "مشاريع مكتملة"],
+visimisi: {
+title: "الرؤية والرسالة",
+visiTitle: "الرؤية",
+visiText: '"تحقيق رفاهية الأمة من خلال الخدمة والتمكين الشرعي عالمياً"',
+misi: [
+{ title: "العمل الخيري", text: "مؤسسة خيرية إسلامية في المجال الاجتماعي والإنساني." },
+{ title: "التمكين المتكامل", text: "تمكين المجتمع اجتماعياً وتعليمياً وصحياً." },
+{ title: "التعاون الاستراتيجي", text: "التعاون مع الشركات المسؤولة." }
+]
+},
+testimonials: {
+title: "قالوا عنا",
+subtitle: "ماذا يقول المتبرعون والمستفيدون عنا."
+},
+newsletter: { title: "تقارير دورية", subtitle: "احصل على تقارير شفافة لاستخدام الأموال.", placeholderEmail: "البريد
+الإلكتروني", placeholderWA: "رقم الواتساب", button: "اشترك في التقرير" },
+footer: {
+desc: "Lumbung Dana Ummat هي منصة خيرية تابعة لمؤسسة أمانة الأمة كديري.",
+rights: "جميع الحقوق محفوظة.",
+contact: "خدمة المتبرعين",
+address: "عنوان المكتب",
+addressText: "شارع بانغليما بوليم 123، مدينة كديري، جاوة الشرقية (يخدم كديري، نغانجوك، باري)",
+legal: "القانونية والتراخيص"
+}
+},
+zh: {
+nav: ["首页", "关于我们", "新闻", "画廊"],
+sedekahBtn: "施舍",
+hero: {
+badge: "认证且符合教法",
+title: "穆斯林福祉",
+subtitle: "通过教法赋权",
+desc: "印尼值得信赖的社会与人道主义基金管理慈善机构。专业、透明且持有官方执照。",
+btn1: "立即捐赠",
+btn2: "简报"
+},
+trust: {
+legalTitle: "官方合法性",
+partnersTitle: "合作伙伴与银行",
+license1: "司法部法令：AHU-0012345.AH.01.04",
+license2: "持牌慈善机构",
+audit: "由注册会计师审计"
+},
+stats: ["已筹集资金", "受益人", "活跃捐赠者", "已完成项目"],
+visimisi: {
+title: "愿景与使命",
+visiTitle: "主要愿景",
+visiText: '"通过全球范围内的教法服务实现穆斯林福祉"',
+misi: [
+{ title: "专业慈善", text: "社会与人道主义领域的伊斯兰慈善机构。" },
+{ title: "综合赋权", text: "在社会、教育和卫生领域赋权社区。" },
+{ title: "战略合作", text: "与负责任的公司合作。" }
+]
+},
+testimonials: {
+title: "捐赠者心声",
+subtitle: "捐赠者和受益人对我们的评价。"
+},
+newsletter: { title: "定期报告", subtitle: "获取透明的资金使用报告。", placeholderEmail: "您的邮箱", placeholderWA: "WhatsApp号码", button:
+"订阅报告" },
+footer: {
+desc: "Lumbung Dana Ummat 是 Yayasan Amanah Ummat Kediri 旗下的慈善平台。",
+rights: "版权所有。",
+contact: "捐赠者服务",
+address: "办公地址",
+addressText: "东爪哇省Kediri市Panglima Polim街123号（服务Kediri, Nganjuk, Pare）",
+legal: "合法性与执照"
+}
+},
+ja: {
+nav: ["ホーム", "私たちについて", "ニュース", "ギャラリー"],
+sedekahBtn: "寄付",
+hero: {
+badge: "認証済み & シャリア準拠",
+title: "ウンマの福祉",
+subtitle: "シャリアによるエンパワーメント",
+desc: "インドネシアの信頼できる社会・人道支援基金管理慈善機関。専門的、透明性が高く、公式に認可されています。",
+btn1: "今すぐ寄付",
+btn2: "会報"
+},
+trust: {
+legalTitle: "公式な法的地位",
+partnersTitle: "パートナー & 銀行",
+license1: "法務省令: AHU-0012345.AH.01.04",
+license2: "認可された慈善機関",
+audit: "登録会計士による監査済み"
+},
+stats: ["調達資金", "受益者", "寄付者", "完了プロジェクト"],
+visimisi: {
+title: "ビジョンとミッション",
+visiTitle: "ビジョン",
+visiText: '"世界規模でのシャリアに基づくサービスを通じたウンマの福祉の実現"',
+misi: [
+{ title: "専門的な慈善", text: "社会・人道支援分野のイスラム慈善機関。" },
+{ title: "統合的支援", text: "社会、教育、健康分野でのコミュニティ支援。" },
+{ title: "戦略的協力", text: "責任ある企業との協力。" }
+]
+},
+testimonials: {
+title: "推薦の声",
+subtitle: "寄付者と受益者の声。"
+},
+newsletter: { title: "定期レポート", subtitle: "透明な資金使用レポートを受け取る。", placeholderEmail: "メール", placeholderWA: "WhatsApp番号",
+button: "レポート登録" },
+footer: {
+desc: "Lumbung Dana Ummatは、Yayasan Amanah Ummat Kediri傘下の慈善プラットフォームです。",
+rights: "全著作権所有。",
+contact: "ドナーサービス",
+address: "オフィス住所",
+addressText: "東ジャワ州ケディリ市パンリマ・ポリム通り123号（ケディリ、ンガンジュク、パレに対応）",
+legal: "法的地位とライセンス"
+}
+}
+};
+
+const t = content[lang];
+const getTrans = (obj, langKey) => obj[langKey] || obj['en'];
+
+const languages = [
+{ code: 'id', name: 'Bahasa', flag: '🇮🇩' },
+{ code: 'en', name: 'English', flag: '🇬🇧' },
+{ code: 'ar', name: 'العربية', flag: '🇸🇦' },
+{ code: 'zh', name: '中文', flag: '🇨🇳' },
+{ code: 'ja', name: '日本語', flag: '🇯🇵' }
+];
+const currentLang = languages.find(l => l.code === lang);
+
+return (
+<div className={`${isDarkMode ? 'dark' : '' } ${isRTL ? 'rtl' : 'ltr' }`} dir={isRTL ? 'rtl' : 'ltr' }>
+    {/* Inject Font Assistant */}
+    <style>
+        {
+            ` @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap');
+
+            body,
+            .font-sans {
+                font-family: 'Assistant', sans-serif !important;
+            }
+
+            `
+        }
+    </style>
+
+    <div
+        className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+        {/* Floating WhatsApp */}
+        <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className={`fixed bottom-6
+            ${isRTL ? 'left-6' : 'right-6' } z-[100] bg-green-600 text-white p-4 rounded-full shadow-2xl
+            hover:bg-green-700 hover:scale-110 transition-all flex items-center justify-center group border-4
+            border-white dark:border-slate-800`}>
+            <MessageCircle size={28} />
+            <span className={`max-w-0 overflow-hidden group-hover:max-w-xs ${isRTL ? 'group-hover:mr-2'
+                : 'group-hover:ml-2' } transition-all duration-300 font-bold whitespace-nowrap`}>WhatsApp</span>
+        </a>
+
+        {/* Navigation */}
+        <nav
+            className="bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg border-b dark:border-slate-800 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between h-20 items-center">
+                    <div className="flex items-center gap-3">
+                        {/* LOGO DI NAVIGASI */}
+                        <img src="Logo_LDU__no_text_-removebg.png" alt="Logo Lumbung Dana Ummat"
+                            className="w-12 h-12 object-contain filter drop-shadow-md hover:scale-105 transition-transform" />
+                        <div className="flex flex-col">
+                            <span className="text-xl font-black tracking-tight leading-none">
+                                Lumbung <span className="text-green-600">Dana</span> Ummat
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Desktop & Tablet Menu (MD and up) */}
+                    <div
+                        className="hidden md:flex items-center space-x-3 lg:space-x-8 text-[10px] lg:text-sm font-bold">
+                        {t.nav.map((item, idx) => (
+                        <a key={idx} href={`#section-${idx}`}
+                            className="hover:text-green-600 dark:hover:text-green-400 transition-colors whitespace-nowrap">
+                            {item}
+                        </a>
+                        ))}
+
+                        {/* UPDATED: Tombol Sedekah Setelah Galeri */}
+                        <a href="#donasi"
+                            className="ml-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full transition-all shadow-md shadow-green-500/20 flex items-center gap-2">
+                            <Wallet size={16} />
+                            <span>{t.sedekahBtn}</span>
+                        </a>
+
+                        <div className={`flex items-center gap-2 lg:gap-3 ${isRTL ? 'border-r pr-3 lg:pr-6 mr-3 lg:mr-6'
+                            : 'border-l pl-3 lg:pl-6 ml-3 lg:ml-6' } dark:border-slate-800`}>
+                            <div className="relative">
+                                <button onClick={()=> setShowLangMenu(!showLangMenu)}
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100
+                                    dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all
+                                    font-bold text-xs"
+                                    >
+                                    <Globe size={16} className="text-slate-500" />
+                                    <span>{currentLang.code.toUpperCase()}</span>
+                                    <ChevronDown size={14} />
+                                </button>
+
+                                {showLangMenu && (
+                                <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0' } bg-white
+                                    dark:bg-slate-900 border dark:border-slate-700 rounded-xl shadow-xl overflow-hidden
+                                    min-w-[160px] z-50`}>
+                                    {languages.map((l) => (
+                                    <button key={l.code} onClick={()=> { setLang(l.code); setShowLangMenu(false); }}
+                                        className="w-full text-left px-4 py-3 text-xs font-bold hover:bg-green-50
+                                        dark:hover:bg-slate-800 flex items-center gap-3">
+                                        <span className="text-lg">{l.flag}</span>
+                                        {l.name}
+                                    </button>
+                                    ))}
+                                </div>
+                                )}
+                            </div>
+                            <button onClick={()=> setIsDarkMode(!isDarkMode)} className="p-2 rounded-lg bg-slate-100
+                                dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                {isDarkMode ?
+                                <Sun size={20} /> :
+                                <Moon size={20} />}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Mobile Menu Button (SM only) */}
+                    <div className="md:hidden flex items-center gap-2">
+                        <button onClick={()=> setIsDarkMode(!isDarkMode)} className="p-2 text-slate-600
+                            dark:text-slate-300">
+                            {isDarkMode ?
+                            <Sun size={20} /> :
+                            <Moon size={20} />}
+                        </button>
+                        <button onClick={()=> {
+                            const nextIndex = (languages.findIndex(l => l.code === lang) + 1) % languages.length;
+                            setLang(languages[nextIndex].code);
+                            }} className="p-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg">
+                            {currentLang.code.toUpperCase()}
+                        </button>
+
+                        <button onClick={()=> setIsMenuOpen(!isMenuOpen)} className="p-2">
+                            {isMenuOpen ?
+                            <X size={24} /> :
+                            <Menu size={24} />}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        {/* Hero Section */}
+        <header className="relative pt-16 pb-24 md:pt-32 md:pb-40 text-center overflow-hidden">
+            {/* Background Slideshow */}
+            <div className="absolute inset-0 w-full h-full z-0">
+                {heroImages.map((img, index) => (
+                <div key={index} className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity
+                    duration-1000 ease-in-out ${index===heroImageIndex ? 'opacity-100' : 'opacity-0' }`} style={{
+                    backgroundImage: `url(${img})` }} />
+                ))}
+                {/* Overlay agar teks terbaca - Putih di Light Mode, Gelap di Dark Mode */}
+                <div className="absolute inset-0 bg-white/85 dark:bg-slate-950/85 backdrop-blur-[1px]"></div>
+            </div>
+
+            <div className="max-w-5xl mx-auto px-4 relative z-10">
+                <div
+                    className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 text-green-700 dark:text-green-400 text-xs font-bold tracking-wider uppercase shadow-sm bg-white/80 dark:bg-black/50 backdrop-blur-md">
+                    <ShieldCheck size={14} />
+                    {t.hero.badge}
+                </div>
+                <h1
+                    className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-8 leading-tight tracking-tight drop-shadow-sm">
+                    {t.hero.title} <br />
+                    <span className="text-green-600 relative inline-block">
+                        {t.hero.subtitle}
+                        <svg className="absolute w-full h-3 -bottom-1 left-0 text-orange-400 opacity-60"
+                            viewBox="0 0 200 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M2.00025 6.99997C25.7509 9.37523 78.9113 9.81702 112.705 7.51084C129.375 6.37326 195.006 4.39801 196.502 3.50003"
+                                stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                    </span>
+                </h1>
+                <p
+                    className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
+                    {t.hero.desc}
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                    <button
+                        className="bg-green-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-green-700 hover:shadow-xl hover:shadow-green-600/30 transition-all flex items-center justify-center gap-2">
+                        {t.hero.btn1}
+                        <Heart size={20} fill="currentColor" />
+                    </button>
+                    <button
+                        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
+                        <FileText size={20} className="text-slate-400" />
+                        {t.hero.btn2}
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        {/* Legalitas Section */}
+        <section className="bg-slate-50 dark:bg-slate-900 py-16">
+            <div className="max-w-7xl mx-auto px-4">
+                <div
+                    className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white dark:bg-slate-950 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div>
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <Award className="text-orange-500" /> {t.trust.legalTitle}
+                        </h3>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">{t.trust.license1}</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{t.trust.license2}</p>
+                    </div>
+                    <div className="flex gap-4 justify-start md:justify-end">
+                        <div
+                            className="px-6 py-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800">
+                            <span
+                                className="block text-xs text-green-600 dark:text-green-400 font-bold uppercase">Status</span>
+                            <span className="font-black text-slate-900 dark:text-white">Active & Verified</span>
+                        </div>
+                        <div
+                            className="px-6 py-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                            <span
+                                className="block text-xs text-blue-600 dark:text-blue-400 font-bold uppercase">Area</span>
+                            <span className="font-black text-slate-900 dark:text-white flex items-center gap-2">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg"
+                                    alt="Bendera Indonesia"
+                                    className="w-5 h-auto rounded shadow-sm border border-black/10" />
+                                Indonesia
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {/* Stats - UPDATED with 4 stats */}
+        <section className="max-w-7xl mx-auto px-4 -mt-10 mb-24 relative z-10">
+            <div
+                className="bg-slate-900 dark:bg-black text-white rounded-[2.5rem] p-12 shadow-2xl flex flex-wrap justify-around items-center gap-12">
+                {['Rp 2.4M+', '15.000+', '45K+', '128'].map((val, i) => (
+                <div key={i} className="text-center">
+                    <div className="text-5xl font-black mb-2 tracking-tighter text-green-400">{val}</div>
+                    <div className="text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold">{t.stats[i]}</div>
+                </div>
+                ))}
+            </div>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section className="py-24 bg-white dark:bg-slate-950">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-black mb-4">{t.testimonials.title}</h2>
+                    <p className="text-slate-500 dark:text-slate-400">{t.testimonials.subtitle}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {[1, 2, 3].map((item) => (
+                    <div key={item} className="bg-slate-50 dark:bg-slate-900 p-8 rounded-3xl relative">
+                        <Quote className="absolute top-8 right-8 text-slate-200 dark:text-slate-800 w-10 h-10" />
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                            <div>
+                                <div className="font-bold text-slate-900 dark:text-white">Hamba Allah</div>
+                                <div className="text-xs text-slate-500">Donatur Rutin</div>
+                            </div>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                            "Alhamdulillah sangat transparan laporannya. Saya bisa melihat langsung progres pembangunan
+                            masjid di Nganjuk lewat website ini."
+                        </p>
+                    </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        {/* Newsletter */}
+        <section className="py-24 px-4">
+            <div
+                className="max-w-5xl mx-auto bg-slate-900 dark:bg-slate-800 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+                <div className="relative z-10">
+                    <Mail className="w-12 h-12 text-green-400 mx-auto mb-6" />
+                    <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">{t.newsletter.title}
+                    </h2>
+                    <p className="text-slate-400 mb-10 max-w-lg mx-auto">{t.newsletter.subtitle}</p>
+
+                    <form onSubmit={(e)=> e.preventDefault()} className="flex flex-col sm:flex-row gap-3 max-w-xl
+                        mx-auto">
+                        <input type="email" placeholder={t.newsletter.placeholderEmail}
+                            className="flex-grow px-6 py-4 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
+                        <button
+                            className="bg-green-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-green-500 transition-all flex items-center justify-center gap-2">
+                            {t.newsletter.button}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-white dark:bg-slate-950 pt-24 pb-12 border-t border-slate-200 dark:border-slate-800">
+            <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div className="md:col-span-1">
+                    {/* LOGO DI FOOTER JUGA DIPERBARUI */}
+                    <div className="flex items-center gap-2 mb-4">
+                        <img src="Logo_LDU__no_text_-removebg.png" alt="Logo LDU" className="w-8 h-8 object-contain" />
+                        <span
+                            className="text-2xl font-black tracking-tighter italic text-slate-900 dark:text-white">Lumbung<span
+                                className="text-green-600">Dana</span></span>
+                    </div>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mt-6">{t.footer.desc}</p>
+                    <div className="mt-6 flex gap-4">
+                        <div
+                            className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-green-600 hover:text-white transition-colors cursor-pointer">
+                            <Globe size={18} />
+                        </div>
+                        <div
+                            className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-green-600 hover:text-white transition-colors cursor-pointer">
+                            <Mail size={18} />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 className="font-bold text-slate-900 dark:text-white mb-6">{t.footer.address}</h4>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {t.footer.addressText}
+                    </p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-4 font-bold">
+                        Phone: (0354) 123456
+                    </p>
+                </div>
+
+                <div>
+                    <h4 className="font-bold text-slate-900 dark:text-white mb-6">{t.footer.legal}</h4>
+                    <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
+                        <li className="flex items-center gap-2">
+                            <Check size={14} className="text-green-500" /> SK Kemenkumham
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <Check size={14} className="text-green-500" /> Izin Dinsos Kediri
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <Check size={14} className="text-green-500" /> Rekomendasi Baznas
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <Check size={14} className="text-green-500" /> Audit Syariah
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                className="border-t border-slate-100 dark:border-slate-900 pt-8 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                © 2026 lumbungdanaummat.id. {t.footer.rights}
+            </div>
+        </footer>
+
+        {/* Mobile Menu Overlay */}
+        {isMenuOpen && (
+        <div
+            className="fixed inset-0 z-[110] bg-white dark:bg-slate-950 p-8 flex flex-col justify-center animate-in fade-in zoom-in duration-200">
+            <button onClick={()=> setIsMenuOpen(false)} className={`absolute top-8 ${isRTL ? 'left-8' : 'right-8'} p-2
+                bg-slate-100 dark:bg-slate-900 rounded-full`}>
+                <X size={24} />
+            </button>
+            <div className="space-y-4 text-center">
+                {t.nav.map((item, i) => (
+                <a key={i} href="#" onClick={()=> setIsMenuOpen(false)} className="block text-2xl font-black
+                    text-slate-900 dark:text-white hover:text-green-600 transition-colors tracking-tight">
+                    {item}
+                </a>
+                ))}
+                {/* UPDATED: Tombol Sedekah di Mobile */}
+                <a href="#donasi" onClick={()=> setIsMenuOpen(false)} className="inline-flex bg-green-600
+                    hover:bg-green-700 text-white px-6 py-3 rounded-full transition-all shadow-md items-center gap-2
+                    text-xl font-bold mt-4">
+                    <Wallet size={20} />
+                    <span>{t.sedekahBtn}</span>
+                </a>
+            </div>
+        </div>
+        )}
+    </div>
+</div>
+);
+};
+
+export default App;
