@@ -12,11 +12,7 @@ export const useAppData = () => {
         queryKey: ['programs'],
         queryFn: async () => {
             try {
-                if (!isSupabaseConfigured) {
-                    const local = localStorage.getItem('ldu_programs');
-                    return local ? JSON.parse(local) : defaultPrograms;
-                }
-
+                // Always try API first, fallback to local/default if fails
                 const { data, error } = await supabase
                     .from('programs')
                     .select('*, projects (*)')
@@ -51,11 +47,6 @@ export const useAppData = () => {
         queryKey: ['news'],
         queryFn: async () => {
             try {
-                if (!isSupabaseConfigured) {
-                    const local = localStorage.getItem('ldu_news');
-                    return local ? JSON.parse(local) : defaultNews;
-                }
-
                 const { data, error } = await supabase
                     .from('news')
                     .select('*')

@@ -88,21 +88,7 @@ const AdminDashboard = ({
         setAuthError(null);
         setIsLoading(true);
 
-        if (!isSupabaseConfigured) {
-            // Fallback to legacy password if Supabase is not setup
-            if (adminPassword === 'LDUber@h2023') {
-                setIsAdminLoggedIn(true);
-                setAdminPassword('');
-                setSelectedItem('overview');
-                setIsLoading(false);
-            } else {
-                setAuthError('Password salah (Mode Lokal)');
-                setIsLoading(false);
-            }
-            return;
-        }
-
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email: adminEmail,
             password: adminPassword,
         });
@@ -123,21 +109,29 @@ const AdminDashboard = ({
         navigateTo('home');
     };
 
-    const handleDelete = () => {
-        if (showDeleteModal.type === 'news') {
-            const updated = newsData.filter(n => n.id !== showDeleteModal.id);
-            setNewsData(updated);
-            localStorage.setItem('ldu_news', JSON.stringify(updated));
-        } else if (showDeleteModal.type === 'program') {
-            const updated = programsData.filter(p => p.id !== showDeleteModal.id);
-            setProgramsData(updated);
-            localStorage.setItem('ldu_programs', JSON.stringify(updated));
-        } else if (showDeleteModal.type === 'project') {
-            const updated = programsData.map(p => p.id === showDeleteModal.parentId
-                ? { ...p, projects: p.projects.filter(prj => prj.id !== showDeleteModal.id) }
-                : p);
-            setProgramsData(updated);
-            localStorage.setItem('ldu_programs', JSON.stringify(updated));
+    const handleDelete = async () => {
+        try {
+            if (showDeleteModal.type === 'news') {
+                await supabase.from('news').delete().eq('id', showDeleteModal.id);
+                const updated = newsData.filter(n => n.id !== showDeleteModal.id);
+                setNewsData(updated);
+                localStorage.setItem('ldu_news', JSON.stringify(updated));
+            } else if (showDeleteModal.type === 'program') {
+                await supabase.from('programs').delete().eq('id', showDeleteModal.id);
+                const updated = programsData.filter(p => p.id !== showDeleteModal.id);
+                setProgramsData(updated);
+                localStorage.setItem('ldu_programs', JSON.stringify(updated));
+            } else if (showDeleteModal.type === 'project') {
+                await supabase.from('projects').delete().eq('id', showDeleteModal.id);
+                const updated = programsData.map(p => p.id === showDeleteModal.parentId
+                    ? { ...p, projects: p.projects.filter(prj => prj.id !== showDeleteModal.id) }
+                    : p);
+                setProgramsData(updated);
+                localStorage.setItem('ldu_programs', JSON.stringify(updated));
+            }
+        } catch (err) {
+            console.error('Delete error:', err);
+            alert('Gagal menghapus data dari database.');
         }
         setShowDeleteModal(null);
     };
