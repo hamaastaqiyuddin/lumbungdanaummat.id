@@ -23,7 +23,7 @@ const Navbar = ({
                 <div className="flex justify-between h-20 items-center">
                     <div className="flex items-center gap-3">
                         <img
-                            src="Logo_LDU__no_text_-removebg.png"
+                            src="/assets/images/favicon.png"
                             alt="Logo Lumbung Dana Ummat"
                             className="w-12 h-12 object-contain filter drop-shadow-md hover:scale-105 transition-transform"
                         />

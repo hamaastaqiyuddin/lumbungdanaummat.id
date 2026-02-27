@@ -75,7 +75,7 @@ export const defaultPrograms = [
         id: 4,
         title: "Wakaf Produktif Peternakan VQ Farm",
         desc: "Pemberdayaan ekonomi melalui peternakan produktif.",
-        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop",
+        image: "/assets/images/icon-wakaf.png",
         projects: [
             {
                 id: "4.1",
