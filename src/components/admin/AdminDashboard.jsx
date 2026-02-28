@@ -944,7 +944,11 @@ const ProjectForm = ({ editingProject, editForm, setEditForm, setAdminView, setE
                         <label className="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">Target Dana <span className="text-red-500">*</span></label>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Rp</span>
-                            <input type="number" value={editForm.target || ''} onChange={e => setEditForm(f => ({ ...f, target: parseInt(e.target.value) || 0 }))}
+                            <input type="text" value={editForm.target || ''}
+                                onChange={e => {
+                                    const cleaned = e.target.value.replace(/\D/g, '');
+                                    setEditForm(f => ({ ...f, target: parseInt(cleaned) || 0 }));
+                                }}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-green-500 outline-none transition-all font-bold"
                                 placeholder="0" />
                         </div>
@@ -953,7 +957,11 @@ const ProjectForm = ({ editingProject, editForm, setEditForm, setAdminView, setE
                         <label className="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">Terkumpul</label>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Rp</span>
-                            <input type="number" value={editForm.collected || ''} onChange={e => setEditForm(f => ({ ...f, collected: parseInt(e.target.value) || 0 }))}
+                            <input type="text" value={editForm.collected || ''}
+                                onChange={e => {
+                                    const cleaned = e.target.value.replace(/\D/g, '');
+                                    setEditForm(f => ({ ...f, collected: parseInt(cleaned) || 0 }));
+                                }}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-green-500 outline-none transition-all font-bold"
                                 placeholder="0" />
                         </div>
@@ -961,7 +969,11 @@ const ProjectForm = ({ editingProject, editForm, setEditForm, setAdminView, setE
                 </div>
                 <div>
                     <label className="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">Sisa Hari</label>
-                    <input type="number" value={editForm.daysLeft || ''} onChange={e => setEditForm(f => ({ ...f, daysLeft: parseInt(e.target.value) || 0 }))}
+                    <input type="text" value={editForm.daysLeft || ''}
+                        onChange={e => {
+                            const cleaned = e.target.value.replace(/\D/g, '');
+                            setEditForm(f => ({ ...f, daysLeft: parseInt(cleaned) || 0 }));
+                        }}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-green-500 outline-none transition-all font-bold"
                         placeholder="Contoh: 30" />
                 </div>
