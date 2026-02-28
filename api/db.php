@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
  * Helper to send JSON response
  */
 function sendResponse($data, $status = 200) {
-    header('Content-Type: application/json', true, status: $status);
+    header('Content-Type: application/json', true, $status);
     echo json_encode($data);
     exit;
 }
