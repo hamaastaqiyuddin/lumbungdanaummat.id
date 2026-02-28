@@ -1,63 +1,112 @@
 // Use MySQL API instead of Supabase
-export const isSupabaseConfigured = true; // Set to true to use the MySQL bridge
+export const isSupabaseConfigured = true;
 
 const API_BASE_URL = '/api';
 
+class QueryBuilder {
+    constructor(table) {
+        this.table = table;
+        this.operation = 'select'; // default
+        this.payload = null;
+        this.filters = {};
+        this.orderBy = null;
+        this.limitVal = null;
+    }
+
+    select(query = '*') {
+        this.operation = 'select';
+        return this;
+    }
+
+    insert(payload) {
+        this.operation = 'insert';
+        this.payload = Array.isArray(payload) ? payload[0] : payload;
+        return this;
+    }
+
+    update(payload) {
+        this.operation = 'update';
+        this.payload = payload;
+        return this;
+    }
+
+    delete() {
+        this.operation = 'delete';
+        return this;
+    }
+
+    upsert(payload) {
+        this.operation = 'upsert';
+        this.payload = payload;
+        return this;
+    }
+
+    eq(column, value) {
+        this.filters[column] = value;
+        return this;
+    }
+
+    order(column, { ascending = true } = {}) {
+        this.orderBy = { column, ascending };
+        return this;
+    }
+
+    limit(val) {
+        this.limitVal = val;
+        return this;
+    }
+
+    async then(onFulfilled, onRejected) {
+        try {
+            let url = `${API_BASE_URL}/${this.table}.php`;
+            let method = 'GET';
+            let body = null;
+
+            if (this.operation === 'update' || this.operation === 'delete') {
+                if (this.filters.id) {
+                    url += `?id=${this.filters.id}`;
+                }
+            }
+
+            switch (this.operation) {
+                case 'insert':
+                    method = 'POST';
+                    body = JSON.stringify(this.payload);
+                    break;
+                case 'update':
+                    method = 'PUT';
+                    body = JSON.stringify(this.payload);
+                    break;
+                case 'delete':
+                    method = 'DELETE';
+                    break;
+                case 'upsert':
+                    method = 'POST';
+                    body = JSON.stringify(this.payload);
+                    break;
+            }
+
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body
+            });
+
+            const data = await res.json();
+            const result = { data, error: res.ok ? null : { message: data.error || 'Unknown error' } };
+
+            return onFulfilled(result);
+        } catch (err) {
+            const result = { data: null, error: { message: err.message } };
+            if (onRejected) return onRejected(result);
+            return onFulfilled(result);
+        }
+    }
+}
+
 export const mysqlApi = {
-    from: (table) => {
-        let currentId = null;
-        return {
-            select: async (query = '*') => {
-                const res = await fetch(`${API_BASE_URL}/${table}.php`);
-                const data = await res.json();
-                return { data, error: res.ok ? null : data.error };
-            },
-            insert: async (payload) => {
-                const res = await fetch(`${API_BASE_URL}/${table}.php`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload[0] || payload)
-                });
-                const data = await res.json();
-                return { data, error: res.ok ? null : { message: data.error } };
-            },
-            update: async (payload) => {
-                const url = currentId ? `${API_BASE_URL}/${table}.php?id=${currentId}` : `${API_BASE_URL}/${table}.php`;
-                const res = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                return { data, error: res.ok ? null : { message: data.error } };
-            },
-            delete: async () => {
-                const url = currentId ? `${API_BASE_URL}/${table}.php?id=${currentId}` : `${API_BASE_URL}/${table}.php`;
-                const res = await fetch(url, { method: 'DELETE' });
-                const data = await res.json();
-                return { data, error: res.ok ? null : { message: data.error } };
-            },
-            eq: function (col, val) {
-                if (col === 'id') currentId = val;
-                return this;
-            },
-            upsert: async (payload) => {
-                const res = await fetch(`${API_BASE_URL}/${table}.php`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                const dataArr = Array.isArray(data) ? data : [data];
-                return { data: dataArr, error: res.ok ? null : { message: data.error } };
-            },
-            order: function () { return this; },
-            limit: function () { return this; },
-            select: function () { return this; }
-        };
-    },
+    from: (table) => new QueryBuilder(table),
     auth: {
-        // ... auth methods stay same
         signInWithPassword: async ({ email, password }) => {
             const res = await fetch(`${API_BASE_URL}/auth.php?action=login`, {
                 method: 'POST',
@@ -80,11 +129,9 @@ export const mysqlApi = {
             return { data: { session: null } };
         },
         onAuthStateChange: (callback) => {
-            // Basic mock for session changes
             return { data: { subscription: { unsubscribe: () => { } } } };
         }
     }
-}
+};
 
-// Export as supabase for backward compatibility to minimize refactoring
 export const supabase = mysqlApi;
