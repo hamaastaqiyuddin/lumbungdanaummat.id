@@ -34,8 +34,12 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
     
-    // Set Timezone
-    $pdo->exec("SET time_zone = '+07:00'");
+    // Set Timezone (may fail on some shared hosts, so we wrap it)
+    try {
+        $pdo->exec("SET time_zone = '+07:00'");
+    } catch (\Exception $e) {
+        // Ignore timezone failure to keep connection alive
+    }
     date_default_timezone_set($timezone);
 
 } catch (\PDOException $e) {
